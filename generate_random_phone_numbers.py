@@ -47,7 +47,7 @@ def generate_temp_files_with_numbers(start_number: int,
             logger.info(f"There are {numbers_written} numbers has been written so far...")
             logger.info(f"Time since start: {perf_counter() - start_time} seconds")
 
-        file_number = int(random() * number_of_chunks + 1)
+        file_number = int(random() * number_of_chunks)
         files[file_number].write(f"+{number}\n")
 
     [file.close() for file in files]
