@@ -18,7 +18,6 @@ Because of this split&merge strategy the script is not that fast.
 
 START_NUMBER = int(os.environ.get("START_NUMBER", 79000000000))
 STOP_NUMBER = int(os.environ.get("STOP_NUMBER", 80000000000))
-TOTAL_ITERATIONS = STOP_NUMBER - START_NUMBER
 
 NUMBER_OF_CHUNKS = int(os.environ.get("NUMBER_OF_CHUNKS", 20))
 FINAL_FILE_NAME = os.environ.get("FINAL_FILE_NAME", "phone_numbers_shuffled.txt")
@@ -31,7 +30,6 @@ logger = logging.getLogger(__name__)
 
 def generate_temp_files_with_numbers(start_number: int,
                                      stop_number: int,
-                                     total_iterations: int,
                                      number_of_chunks: int,
                                      raw_files_name: tp.Tuple[str]) -> None:
     """Generates several files with phone numbers."""
@@ -41,10 +39,9 @@ def generate_temp_files_with_numbers(start_number: int,
     start_time = perf_counter()
 
     logger.info(f"Start generating phone numbers at {datetime.now().strftime('%H:%M:%S')}")
-    for number in range(start_number, stop_number):
-        numbers_written = total_iterations - (stop_number - number)
-        if numbers_written > 0 and numbers_written % 10000000 == 0:
-            logger.info(f"There are {numbers_written} numbers has been written so far...")
+    for i, number in enumerate(range(start_number, stop_number), start=0):
+        if i % 10000000 == 0:
+            logger.info(f"There are {i} numbers has been written so far...")
             logger.info(f"Time since start: {perf_counter() - start_time} seconds")
 
         file_number = int(random() * number_of_chunks)
@@ -78,7 +75,6 @@ def main():
 
     generate_temp_files_with_numbers(start_number=START_NUMBER,
                                      stop_number=STOP_NUMBER,
-                                     total_iterations=TOTAL_ITERATIONS,
                                      number_of_chunks=NUMBER_OF_CHUNKS,
                                      raw_files_name=RAW_FILE_NAMES)
     shuffle_and_merge(file_names=RAW_FILE_NAMES, final_file_name=FINAL_FILE_NAME)
