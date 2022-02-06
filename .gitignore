@@ -129,3 +129,7 @@ dmypy.json
 .pyre/
 
 .idea/
+
+/phone_numbers_shuffled.txt
+/sorted_phone_numbers.txt
+/draft.py
