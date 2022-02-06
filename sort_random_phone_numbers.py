@@ -4,6 +4,8 @@ import typing as tp
 from heapq import merge
 from time import perf_counter
 
+from utils import chunked
+
 """
 This script sorts a file with random phone numbers or any other lines.
 
@@ -52,19 +54,15 @@ def split_huge_file_into_sorted_chucks(file_name_with_numbers_to_sort: str,
     chunk_file_names = []
 
     with open(file_name_with_numbers_to_sort, "r") as phone_numbers_file:
-        lines = []
-        for i, line in enumerate(phone_numbers_file, start=1):
-            lines.append(line)
-            if i > 0 and i % lines_per_chunk == 0:
-                file_part = int(i / lines_per_chunk)
-                logger.info(f"Start sorting {file_part} part of original file...")
-                lines.sort()
-                file_name = chunk_name_template.format(file_part)
-                chunk_file_names.append(file_name)
-                with open(file_name, "w") as chunk:
-                    logger.info(f"Saving {file_name}...")
-                    chunk.writelines(lines)
-                lines[:] = []
+        for i, lines in enumerate(chunked(phone_numbers_file, lines_per_chunk), start=1):
+            logger.info(f"Start sorting {i} part of original file...")
+            lines.sort()
+            file_name = chunk_name_template.format(i)
+            chunk_file_names.append(file_name)
+            with open(file_name, "w") as chunk:
+                logger.info(f"Saving {file_name}...")
+                chunk.writelines(lines)
+
 
     return chunk_file_names
 
